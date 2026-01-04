@@ -37,7 +37,17 @@ func (app *application) createView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createPOST(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Create POST"))
+	topic := "leetcode"
+	duration := 60
+	notes := "Studied some traversal stuff on trees"
+
+	id, err := app.sessions.InsertSession(topic, duration, notes)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/study/view?id=%d", id), http.StatusSeeOther)
 }
 
 func (app *application) studyView(w http.ResponseWriter, r *http.Request) {
@@ -48,4 +58,8 @@ func (app *application) studyView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "Getting study with id %d...", id)
+}
+
+func (app *application) viewTopicStats(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("View stats"))
 }
